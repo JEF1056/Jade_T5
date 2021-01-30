@@ -36,8 +36,7 @@ def preprocess(ds):
             "inputs": tf.strings.join(["Input: ", normalize_text(ex["question"]),"Context: ", normalize_text(ex["context"])]),
             "targets": normalize_text(ex["answer"])
         }
-    return ds.map(to_inputs_and_targets, 
-                    num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
   
 t5.data.TaskRegistry.add(
     "jade_qa",
