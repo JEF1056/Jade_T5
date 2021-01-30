@@ -1,12 +1,7 @@
 import json
 import requests
 import argparse
-
-def s2b(v):
-    if isinstance(v, bool): return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'): return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'): return False
-    else: raise argparse.ArgumentTypeError('Boolean value expected.')
+from src.helpers import str2bool as s2b
 
 parser = argparse.ArgumentParser(description='Export checkpoints for serving')
 parser.add_argument('-url', type=str, default="https://woz-model.herokuapp.com/v1/models/jade:predict",
