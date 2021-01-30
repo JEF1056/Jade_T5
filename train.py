@@ -12,7 +12,7 @@ parser.add_argument('-train', type=str, default="context-train.txt",
                     help='train file')
 parser.add_argument('-val', type=str, default="context-val.txt",
                     help='val file')
-parser.add_argument('-tpu_address', type=str, default="context-train.txt",
+parser.add_argument('-tpu_address', type=str, default=None,
                     help='TPU ip address')
 parser.add_argument('-tpu_topology', type=str, default="v3-8", choices=["v2-8","v3-8"],
                     help='train file')
@@ -32,6 +32,11 @@ os.remove("config.json")
 with open("config.json", "w") as f:
     json.dump({"train":os.path.join(args.dir,"data", args.train), "validation": os.path.join(args.dir,"data", args.val)},f)
 import createtask
+
+if args.tpu_address != None:
+    tf.enable_eager_execution()
+    tf.config.experimental_connect_to_host(args.tpu_address)
+    print('Running on TPU:', args.tpu_address)
 
 MODEL_SIZE = args.model_size
 MODELS_DIR = os.path.join(args.dir, "models")
