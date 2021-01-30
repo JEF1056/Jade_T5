@@ -58,7 +58,7 @@ tf.io.gfile.makedirs(MODEL_DIR)
 # The models from our paper are based on the Mesh Tensorflow Transformer.
 model = t5.models.MtfModel(
     model_dir=MODEL_DIR,
-    tpu=f"grpc://{args.tpu_address}:8470",
+    tpu=args.tpu_address,
     tpu_topology=args.tpu_topology,
     model_parallelism=model_parallelism,
     batch_size=train_batch_size,
