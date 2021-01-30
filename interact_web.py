@@ -17,7 +17,7 @@ while True:
     response = requests.post(args.url, data='{"inputs": ["Input: '+inp+' Context: ['+'<div>'.join(history)+']"]}')
     message=json.loads(response.text.replace("⁇ ","<"))
     if "error" in message or args.debug: print(f"\n{message}\n")
-    elif not "error" in message: 
+    if not "error" in message: 
         print(message["outputs"]["outputs"][0].replace("<br>", "\n"))
         history.append(inp)
         history.append(message["outputs"]["outputs"][0])
