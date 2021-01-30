@@ -5,6 +5,8 @@ import warnings
 import argparse
 import src.helpers as helpers
 import tensorflow.compat.v1 as tf
+from contextlib import contextmanager
+import logging as py_logging
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 parser = argparse.ArgumentParser(description='Finetune T5')
@@ -41,6 +43,17 @@ if args.tpu_address != None:
     tf.config.experimental_connect_to_cluster(tpu)
     tf.tpu.experimental.initialize_tpu_system(tpu)
     print("All devices: ", tf.config.list_logical_devices('TPU'))
+    tf.disable_v2_behavior()
+    
+tf.get_logger().propagate = False
+py_logging.root.setLevel('INFO')
+
+@contextmanager
+def tf_verbosity_level(level):
+    og_level = tf.logging.get_verbosity()
+    tf.logging.set_verbosity(level)
+    yield
+    tf.logging.set_verbosity(og_level)
 
 MODEL_SIZE = args.model_size
 MODELS_DIR = os.path.join(args.dir, "models")
