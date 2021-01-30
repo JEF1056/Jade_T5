@@ -1,9 +1,8 @@
 import t5
 import os
-import json
-import argparse
-import src.helpers as helpers
+import warnings
 import tensorflow.compat.v1 as tf
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, default="gs://conversation-t5",
