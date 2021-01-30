@@ -1,6 +1,7 @@
 import t5
 import json
 import functools
+import numpy as np
 import tensorflow.compat.v1 as tf
 import tensorflow_datasets as tfds
 
@@ -10,28 +11,30 @@ with open("config.json", "r") as f:
 def nq_dataset_fn(split, shuffle_files=False):
     # We only have one file for each split.
     del shuffle_files
-
     # Load lines from the text file as examples.
     ds = tf.data.TextLineDataset(nq_tsv_path[split])
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
-    ds = ds.map(functools.partial(tf.io.decode_csv, field_delim="\t", use_quote_delim=False), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=[''],field_delim="\n", use_quote_delim=False), num_parallel_calls=tf.data.experimental.AUTOTUNE)
     return ds
 
 print("A few raw validation examples...")
 for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
     print(ex)
 
-exit()
-
 def preprocess(ds):
-    def normalize_text(text):
-        return text
+    def sample(text):
+        text=text.split("\t")
+        ind=np.sort(np.random.choice(len(text)-1,2, replace=False))
+        i='\t'.join(text[ind[0]:ind[1]])
+        t=text[ind[1]]
+        return i, t
 
     def to_inputs_and_targets(ex):
         """Map {"question": ..., "answer": ...}->{"inputs": ..., "targets": ...}."""
+        question, answer = sample(ex)
         return {
-            "inputs": tf.strings.join(["Input: ", normalize_text(ex["question"]),"Context: ", normalize_text(ex["context"])]),
-            "targets": normalize_text(ex["answer"])
+            "inputs": tf.strings.join(["Input: ", question]),
+            "targets": answer
         }
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
   
