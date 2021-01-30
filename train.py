@@ -31,6 +31,7 @@ args = parser.parse_args()
 with open("config.json", "w") as f:
     json.dump({"train":os.path.join(args.dir,"data", args.train), "validation": os.path.join(args.dir,"data", args.val)},f)
 import src.createtask
+args.tpu_address = f"grpc://{args.tpu_address}:8475"
 
 if args.tpu_address != None:
     tf.enable_eager_execution()
