@@ -25,9 +25,8 @@ def preprocess(ds):
     def sample(text):
         text=text.split("\t")
         ind=np.sort(np.random.choice(len(text)-1,2, replace=False))
-        i='\t'.join(text[ind[0]:ind[1]])
-        t=text[ind[1]]
-        return i, t
+        if ind[1]-ind[0] > 10: ind[0]=ind[1]-10
+        return '\t'.join(text[ind[0]:ind[1]]), text[ind[1]]
 
     def to_inputs_and_targets(ex):
         """Map {"question": ..., "answer": ...}->{"inputs": ..., "targets": ...}."""
