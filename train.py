@@ -36,9 +36,11 @@ import src.createtask
 args.tpu_address = f"grpc://{args.tpu_address}:8470"
 
 if args.tpu_address != None:
-    resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=args.tpu_address)
+    tpu = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=args.tpu_address)
     tf.enable_eager_execution()
-    tf.config.experimental_connect_to_cluster(resolver)
+    tf.config.experimental_connect_to_cluster(tpu)
+    tf.tpu.experimental.initialize_tpu_system(tpu)
+    tpu_strategy = tf.distribute.TPUStrategy(tpu)
     print('Running on TPU:', args.tpu_address)
 
 MODEL_SIZE = args.model_size
