@@ -37,7 +37,7 @@ args.tpu_address = f"grpc://{args.tpu_address}:8470"
 
 if args.tpu_address != None:
     tpu = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=args.tpu_address)
-    #tf.enable_eager_execution()
+    tf.enable_eager_execution()
     tf.config.experimental_connect_to_cluster(tpu)
     tf.tpu.experimental.initialize_tpu_system(tpu)
     print("All devices: ", tf.config.list_logical_devices('TPU'))
