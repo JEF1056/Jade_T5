@@ -40,7 +40,6 @@ if args.tpu_address != None:
     tf.enable_eager_execution()
     tf.config.experimental_connect_to_cluster(tpu)
     tf.tpu.experimental.initialize_tpu_system(tpu)
-    tpu_strategy = tf.distribute.TPUStrategy(tpu)
     print('Running on TPU:', args.tpu_address)
 
 MODEL_SIZE = args.model_size
