@@ -10,7 +10,7 @@ parser.add_argument("-debug", type=s2b, nargs='?', const=True, default=False,
                     help="debugging flag")
 args = parser.parse_args()
 
-history=[]
+history = []
 
 while True:
     inp = input('> ')
