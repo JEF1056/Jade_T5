@@ -28,7 +28,6 @@ parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, defau
                     help="eval model after training")
 args = parser.parse_args()
 
-os.remove("config.json")
 with open("config.json", "w") as f:
     json.dump({"train":os.path.join(args.dir,"data", args.train), "validation": os.path.join(args.dir,"data", args.val)},f)
 import createtask
