@@ -17,6 +17,7 @@ def nq_dataset_fn(split, shuffle_files=False):
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=[''],field_delim="\n", use_quote_delim=False), num_parallel_calls=tf.data.experimental.AUTOTUNE)
     print(ds)
     print(type(ds))
+    exit()
     return ds
 
 print("A few raw validation examples...")
