@@ -14,10 +14,11 @@ def nq_dataset_fn(split, shuffle_files=False):
     # Load lines from the text file as examples.
     ds = tf.data.TextLineDataset(nq_tsv_path[split])
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
-    ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=[''],field_delim="\n", use_quote_delim=False), num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    print(ds)
-    print(type(ds))
-    exit()
+    ds = ds.map(
+    functools.partial(tf.io.decode_csv, record_defaults=["", ""],
+                      field_delim="\t", use_quote_delim=False),
+    num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    ds = ds.map(lambda *ex: dict(zip(["question", "answer"], ex)))
     return ds
 
 print("A few raw validation examples...")
@@ -25,20 +26,18 @@ for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
     print(ex)
 
 def preprocess(ds):
-    def sample(text):
+    def normalize_text(text):
         print(f"trying {text}")
         text=tf.strings.unicode_encode(text, "UTF-8")
-        text=tf.strings.split(text, sep="\t")
-        ind=np.sort(np.random.choice(len(text)-1,2, replace=False))
-        if ind[1]-ind[0] > 10: ind[0]=ind[1]-10
-        return tf.as_tensor('\t'.join(text[ind[0]:ind[1]]), tf.strings.split(text[ind[1]], sep="; ")[1])
+        return text
 
     def to_inputs_and_targets(ex):
         """Map {"question": ..., "answer": ...}->{"inputs": ..., "targets": ...}."""
-        question, answer = sample(ex)
         return {
-            "inputs": tf.strings.join(["Input: ", question]),
-            "targets": answer
+            "inputs":
+                tf.strings.join(
+                    ["trivia question: ", normalize_text(ex["question"])]),
+            "targets": normalize_text(ex["answer"])
         }
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
   
