@@ -36,7 +36,7 @@ def preprocess(ds):
         return {
             "inputs":
                 tf.strings.join(
-                    ["trivia question: ", normalize_text(ex["question"])]),
+                    ["Input: ", normalize_text(ex["question"])]),
             "targets": normalize_text(ex["answer"])
         }
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
