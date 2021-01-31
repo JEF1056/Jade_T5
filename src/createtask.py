@@ -23,10 +23,11 @@ for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
 
 def preprocess(ds):
     def sample(text):
+        text=tf.strings.as_string(text)
         text=filter(None, text.replace("\n","").encode("ascii", "ignore").decode().split("\t"))
         ind=np.sort(np.random.choice(len(text)-1,2, replace=False))
         if ind[1]-ind[0] > 10: ind[0]=ind[1]-10
-        return '\t'.join(text[ind[0]:ind[1]]), text[ind[1]].split(": ")[1]
+        return tf.as_tensor('\t'.join(text[ind[0]:ind[1]]), text[ind[1]].split(": ")[1])
 
     def to_inputs_and_targets(ex):
         """Map {"question": ..., "answer": ...}->{"inputs": ..., "targets": ...}."""
