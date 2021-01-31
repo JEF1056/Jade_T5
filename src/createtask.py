@@ -15,6 +15,8 @@ def nq_dataset_fn(split, shuffle_files=False):
     ds = tf.data.TextLineDataset(nq_tsv_path[split])
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=[''],field_delim="\n", use_quote_delim=False), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    print(ds)
+    print(type(ds))
     return ds
 
 print("A few raw validation examples...")
