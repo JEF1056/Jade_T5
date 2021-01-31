@@ -27,8 +27,8 @@ for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
 
 def preprocess(ds):
     def normalize_text(text):
-        print(f"trying {text}")
-        text=tf.strings.unicode_encode(text, "UTF-8")
+        #print(f"trying {text}")
+        #text=tf.strings.unicode_encode(text, "UTF-8")
         return text
 
     def to_inputs_and_targets(ex):
