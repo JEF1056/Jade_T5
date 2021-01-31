@@ -23,6 +23,8 @@ for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
 
 def preprocess(ds):
     def sample(text):
+        print(text)
+        exit()
         text=tf.strings.unicode_encode(text, "UTF-8")
         text=tf.strings.split(text, sep="\t")
         ind=np.sort(np.random.choice(len(text)-1,2, replace=False))
