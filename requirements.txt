@@ -1,4 +1,4 @@
 t5
 tensorflow
 tensorflow-datasets
-google-cloud-storage
+tensorflow-text

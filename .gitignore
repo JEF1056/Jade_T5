@@ -1,1 +1,4 @@
 *.pyc
+1*
+config*
+model*

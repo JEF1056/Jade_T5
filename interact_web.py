@@ -11,16 +11,18 @@ parser.add_argument("-debug", type=s2b, nargs='?', const=True, default=False,
 args = parser.parse_args()
 
 history = []
+username=input('Username: ')
 
 while True:
     inp = input('> ')
-    inpdata = '{"inputs": ["Input: '+inp+' Context: ['+'<div>'.join(history)+']"]}'
+    inp= username+": "+inp
+    inpdata = '{"inputs": ["Input: '+'\b'.join(history+[inp])+']}'
     response = requests.post(args.url.encode("utf-8"), data=inpdata.encode("utf-8"))
-    message = json.loads(response.text.replace("⁇ ","<"))
+    message = json.loads(response.text)
     if "error" in message or args.debug: 
         print(f"\n{message}\n")
     if not "error" in message: 
-        print(message["outputs"]["outputs"][0].replace("<br>", "\n"))
+        print(message["outputs"]["outputs"][0].replace("\\n", "\n"))
         history.append(inp)
-        history.append(message["outputs"]["outputs"][0])
+        history.append("Jade: "+message["outputs"]["outputs"][0])
         history = history[-4:]
