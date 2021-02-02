@@ -30,4 +30,4 @@ while True:
         print(message["outputs"]["outputs"][0].replace("\\n", "\n"))
         history.append(inp)
         history.append("Jade: "+message["outputs"]["outputs"][0])
-        history = history[-4:]
+        history = history[-10:]
