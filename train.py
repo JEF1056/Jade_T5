@@ -71,6 +71,11 @@ model_parallelism, train_batch_size, keep_checkpoint_max = {
     "3B": (8, 16, 1),
     "11B": (8, 16, 1)}[MODEL_SIZE]
 
+if args.tpu_topology == "v3-8":
+    print("Increasing batches for larger TPU")
+    model_parallelism=model_parallelism*4
+    train_batch_size=train_batch_size*2
+
 tf.io.gfile.makedirs(MODEL_DIR)
 # The models from our paper are based on the Mesh Tensorflow Transformer.
 model = t5.models.MtfModel(
