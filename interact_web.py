@@ -21,7 +21,7 @@ username=input('Username: ')
 while True:
     inp = input('> ')
     inp= username+": "+inp
-    inpdata = '{"inputs": ["Input: '+'\\b'.join(history+[inp])+'"]}'
+    inpdata = '{"inputs": ["Input: '+'/b'.join(history+[inp])+'"]}'
     response = requests.post(args.url.encode("utf-8"), data=inpdata.encode("utf-8"))
     message = json.loads(response.text)
     if "error" in message or args.debug: 
