@@ -16,18 +16,29 @@ parser.add_argument("-debug", type=s2b, nargs='?', const=True, default=False,
 args = parser.parse_args()
 
 history = []
-username=input('Username: ')
+uname=input('Username: ')
+
+class ResponseGenerator:
+    def __init__(self, url): 
+        self.history=[""]
+        self.url=url
+
+    def response(self, username, inp, debug=False):
+        inp= username+": "+inp
+        inpdata = '{"inputs": ["Input: '+'/b'.join(self.history+[inp])+'"]}'
+        response = requests.post(self.url.encode("utf-8"), data=inpdata.encode("utf-8"))
+        message = json.loads(response.text)
+        if "error" in message or debug: 
+            print(f"{message}")
+        if not "error" in message: 
+            #print(message["outputs"]["outputs"][0].replace("/n", "\n"))
+            self.history.append(inp)
+            self.history.append("Jade: "+message["outputs"]["outputs"][0])
+            self.history = self.history[-20:]
+        return message["outputs"]["outputs"][0].replace("/n", "\n")
+        
+model=ResponseGenerator(args.url)
 
 while True:
     inp = input('> ')
-    inp= username+": "+inp
-    inpdata = '{"inputs": ["Input: '+'/b'.join(history+[inp])+'"]}'
-    response = requests.post(args.url.encode("utf-8"), data=inpdata.encode("utf-8"))
-    message = json.loads(response.text)
-    if "error" in message or args.debug: 
-        print(f"\n{message}\n")
-    if not "error" in message: 
-        print(message["outputs"]["outputs"][0].replace("\\n", "\n"))
-        history.append(inp)
-        history.append("Jade: "+message["outputs"]["outputs"][0])
-        history = history[-10:]
+    print(model.response(uname, inp, debug=args.debug))

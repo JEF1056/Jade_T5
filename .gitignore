@@ -1,4 +1,4 @@
 *.pyc
 1*
-config.*
-model.tar.gz
+config*
+model*

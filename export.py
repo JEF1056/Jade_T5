@@ -2,6 +2,10 @@ import t5
 import os
 import argparse
 import src.createtask
+import warnings
+import logging as py_logging
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+py_logging.root.setLevel('INFO')
 
 parser = argparse.ArgumentParser(description='Export checkpoints for serving')
 parser.add_argument('-dir', type=str, required=True,
