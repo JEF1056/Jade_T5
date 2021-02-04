@@ -1,6 +1,6 @@
 import asyncio
 import discord
-from interact_web import ResponseGenerator
+from src.response import ResponseGenerator
 import json
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
