@@ -18,12 +18,12 @@ class ResponseGenerator:
             'ï':'i', 'ð':'o', 'ñ':'n', 'ń':'n', 'ò':'o', 'ó':'o', 'ô':'o', 'õ':'o', 'ö':'o', 'ø':'o', 'ù':'u',
             'ú':'u', 'û':'u', 'ü':'u', 'ý':'y', 'ý':'y', 'þ':'b', 'ÿ':'y', 'ƒ':'f',
             'ă':'a', 'î':'i', 'â':'a', 'ș':'s', 'ț':'t', 'Ă':'A', 'Î':'I', 'Â':'A', 'Ș':'S', 'Ț':'T',}
-        self.alphabets= json.load(urlopen("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt"))
+        self.alphabets= json.load(urlopen("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt").encode("utf-8"))
         for alphabet in self.alphabets[1:]:
-            alphabet=alphabet.decode("utf-8")
+            alphabet=alphabet
             for ind, char in enumerate(alphabet):
-                try:self.normalize_chars[char]=self.alphabets[0].decode("utf-8")[ind]
-                except: print(alphabet, len(alphabet), len(self.alphabets[0].decode("utf-8")));break
+                try:self.normalize_chars[char]=self.alphabets[0][ind]
+                except: print(alphabet, len(alphabet), len(self.alphabets[0]));break
         
         self.r1=re.compile(r'https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)|[\w\-\.]+@(?:[\w-]+\.)+[\w-]{2,4}|(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}|```(?:.?)+```|:[^:\s]*(?:::[^:\s]*)*:|(?:\\n)+|(?<=[:.,!?()]) (?=[:.,!?()])|[^a-z1-9.,!@?\s\/\U0001F600-\U0001F64F\U0001F300-\U0001F5FF]+', flags=re.DOTALL | re.IGNORECASE)
         self.r2=re.compile(r'[\U00003000\U0000205F\U0000202F\U0000200A\U00002000-\U00002009\U00001680\U000000A0\t]+')
