@@ -36,6 +36,7 @@ class ResponseGenerator:
         text= re.sub(self.r9, r'\1', text) #handle spaces before punctuation but after text
         text= text.strip().replace("\n","/n") #handle newlines
         text=text.strip()
+        text=text.replace('"',"'")
         if author==True: text=text.split(" ")[-1]
         return text
 
