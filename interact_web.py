@@ -15,9 +15,6 @@ parser.add_argument("-debug", type=s2b, nargs='?', const=True, default=False,
                     help="debugging flag")
 args = parser.parse_args()
 
-history = []
-uname=input('Username: ')
-
 class ResponseGenerator:
     def __init__(self, url): 
         self.history=[""]
@@ -38,6 +35,10 @@ class ResponseGenerator:
         
 model=ResponseGenerator(args.url)
 
-while True:
-    inp = input('> ')
-    print(model.response(uname, inp, debug=args.debug))
+if __name__ == '__main__':
+    history = []
+    uname=input('Username: ')
+
+    while True:
+        inp = input('> ')
+        print(model.response(uname, inp, debug=args.debug))
