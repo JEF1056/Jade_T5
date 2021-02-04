@@ -30,6 +30,6 @@ async def on_message(message):
                 else:
                     await message.channel.trigger_typing()
                     out = await loop.run_in_executor(ThreadPoolExecutor(), model.response, message.author.display_name, message.content, True)
-                    await message.reply(out).replace("@everyone","").replace("@here", "")
+                    await message.reply(out.replace("@everyone","").replace("@here", ""))
 
 client.run(config_general["token"])
