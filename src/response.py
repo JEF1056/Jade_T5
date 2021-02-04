@@ -3,7 +3,7 @@ import requests
 import json
 import time
 from discord import Webhook, RequestsWebhookAdapter
-import urllib
+from urllib.request import urlopen
 
 class ResponseGenerator:    
     def __init__(self, url,webhook_url): 
@@ -18,7 +18,7 @@ class ResponseGenerator:
             'ï':'i', 'ð':'o', 'ñ':'n', 'ń':'n', 'ò':'o', 'ó':'o', 'ô':'o', 'õ':'o', 'ö':'o', 'ø':'o', 'ù':'u',
             'ú':'u', 'û':'u', 'ü':'u', 'ý':'y', 'ý':'y', 'þ':'b', 'ÿ':'y', 'ƒ':'f',
             'ă':'a', 'î':'i', 'â':'a', 'ș':'s', 'ț':'t', 'Ă':'A', 'Î':'I', 'Â':'A', 'Ș':'S', 'Ț':'T',}
-        self.alphabets= json.load(requests.get("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt"))
+        self.alphabets= json.load(urlopen("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt"))
         for alphabet in self.alphabets[1:]:
             alphabet=alphabet.decode("utf-8")
             for ind, char in enumerate(alphabet):
