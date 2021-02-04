@@ -18,7 +18,7 @@ class ResponseGenerator:
         
     def register(self, id, timestamp):
         if id in self.history:
-            if time.time()-self.history[id]["timestamp"] >= 600:
+            if timestamp-self.history[id]["timestamp"] >= 600:
                 self.history[id]={"history":[],"timestamp":timestamp}
             else:
                 self.history[id]["timestamp"]=timestamp
