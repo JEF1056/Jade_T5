@@ -26,7 +26,7 @@ async def on_message(message):
             if message.guild.id == 387328200113651732:
                 message.content=message.content[len(config_general["prefix"]):]
                 if message.content == "-h":
-                    await message.reply("History:\n>"+"\n>".join(model.history))
+                    await message.reply("History:"+"\n> ".join(model.history))
                 else:
                     await message.channel.trigger_typing()
                     out = await loop.run_in_executor(ThreadPoolExecutor(), model.response, message.author.display_name, message.content, True)
