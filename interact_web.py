@@ -30,11 +30,10 @@ class ResponseGenerator:
         message = json.loads(response.text)
         if "error" in message or debug: 
             print(f"{message}")
-        if not "error" in message: 
-            #print(message["outputs"]["outputs"][0].replace("/n", "\n"))
-            self.history.append(inp)
-            self.history.append("Jade: "+message["outputs"]["outputs"][0])
-            self.history = self.history[-20:]
+            return message
+        self.history.append(inp)
+        self.history.append("Jade: "+message["outputs"]["outputs"][0])
+        self.history = self.history[-20:]
         return message["outputs"]["outputs"][0].replace("/n", "\n")
         
 model=ResponseGenerator(args.url)
