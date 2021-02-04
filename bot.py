@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 intents = discord.Intents(messages=True, guilds=True, typing = False, presences = False, members=False)
 client = discord.AutoShardedClient(intents=intents, chunk_guilds_at_startup=False)
-config_general=json.loads(open("config-bot.json","r").read())["discord"]
+config_general=json.loads(open("config-bot.json","r").read())
 
 model=ResponseGenerator("https://woz-model.herokuapp.com/v1/models/jade:predict")
 
