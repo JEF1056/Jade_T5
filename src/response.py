@@ -18,7 +18,7 @@ class ResponseGenerator:
             'ï':'i', 'ð':'o', 'ñ':'n', 'ń':'n', 'ò':'o', 'ó':'o', 'ô':'o', 'õ':'o', 'ö':'o', 'ø':'o', 'ù':'u',
             'ú':'u', 'û':'u', 'ü':'u', 'ý':'y', 'ý':'y', 'þ':'b', 'ÿ':'y', 'ƒ':'f',
             'ă':'a', 'î':'i', 'â':'a', 'ș':'s', 'ț':'t', 'Ă':'A', 'Î':'I', 'Â':'A', 'Ș':'S', 'Ț':'T',}
-        self.alphabets= json.load(urlopen("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt").encode("utf-8"))
+        self.alphabets= json.loads(urlopen("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt").read().encode("utf-8"))
         for alphabet in self.alphabets[1:]:
             alphabet=alphabet
             for ind, char in enumerate(alphabet):
