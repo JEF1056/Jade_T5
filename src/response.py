@@ -45,7 +45,7 @@ class ResponseGenerator:
     def response(self, user, inp, debug=False):
         self.register(user.id, time.time())
         inp= self.clean(user.display_name, author=True)+": "+self.clean(inp)
-        inpdata = '{"inputs": ["Input: '+'/b'.join(self.history[inp])+'"]}'
+        inpdata = '{"inputs": ["Input: '+'/b'.join(self.history[user.id]["history"])+'"]}'
         response = requests.post(self.url.encode("utf-8"), data=inpdata.encode("utf-8"))
         message = json.loads(response.text)
         if "error" in message or debug: 
