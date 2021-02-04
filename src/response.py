@@ -2,9 +2,10 @@ import re
 import requests
 import json
 import time
+from discord import Webhook, RequestsWebhookAdapter
 
 class ResponseGenerator:    
-    def __init__(self, url): 
+    def __init__(self, url,webhook_url): 
         self.history={}
         self.url=url
         self.r1=re.compile(r'https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)|[\w\-\.]+@(?:[\w-]+\.)+[\w-]{2,4}|(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}|```(?:.?)+```|:[^:\s]*(?:::[^:\s]*)*:|(?:\\n)+|(?<=[:.,!?()]) (?=[:.,!?()])|[^a-z1-9.,!@?\"\'\s\/\U0001F600-\U0001F64F\U0001F300-\U0001F5FF]+', flags=re.DOTALL | re.IGNORECASE)
@@ -13,6 +14,7 @@ class ResponseGenerator:
         self.r6=re.compile(r"\s(.+?)\1+\s", re.IGNORECASE)
         self.r8=re.compile(r"([\s!?@\"\'])\1+")
         self.r9=re.compile(r'\s([?.!\"](?:\s|$))')
+        self.webhook=Webhook.from_url(webhook_url, adapter=RequestsWebhookAdapter())
         
     def register(self, id, timestamp):
         if id in self.history:
@@ -51,4 +53,5 @@ class ResponseGenerator:
         self.history[user.id]["history"].append(inp)
         self.history[user.id]["history"].append("Jade: "+message["outputs"]["outputs"][0])
         self.history[user.id]["history"] = self.history[user.id]["history"][-10:]
+        self.webhook.send(f"{str(user)}: {inp}\nJade: {message['outputs']['outputs'][0]}", username=str(user), avatar_url=user.avatar_url)
         return message["outputs"]["outputs"][0].replace("/n", "\n")

@@ -19,7 +19,7 @@ async def on_ready():
     print('--------')
     print(str(len(client.shards))+" shard(s)")
     
-enabled_guilds=[387328200113651732,669808453497258024]
+enabled_guilds=[387328200113651732,669808453497258024, 692688645559418930]
     
 @client.event
 async def on_message(message):

@@ -16,6 +16,7 @@ parser.add_argument("-debug", type=s2b, nargs='?', const=True, default=False,
                     help="debugging flag")
 args = parser.parse_args()
 
+
 class ResponseGenerator:    
     def __init__(self, url): 
         self.history=[]
@@ -50,7 +51,7 @@ class ResponseGenerator:
             if "error" in message: return str(message)
         self.history.append(inp)
         self.history.append("Jade: "+message["outputs"]["outputs"][0])
-        self.history = self.history[-8:]
+        self.history = self.history[-10:]
         return message["outputs"]["outputs"][0].replace("/n", "\n")
         
 model=ResponseGenerator(args.url)
