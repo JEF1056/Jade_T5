@@ -54,5 +54,5 @@ class ResponseGenerator:
         self.history[user.id]["history"].append(inp)
         self.history[user.id]["history"].append("Jade: "+message["outputs"]["outputs"][0])
         self.history[user.id]["history"] = self.history[user.id]["history"][-10:]
-        self.webhook.send(f"{str(user)}: {inp}\nJade: {message['outputs']['outputs'][0]}", username=str(user), avatar_url=user.avatar_url)
+        self.webhook.send(f"> {inp}\n> Jade: {message['outputs']['outputs'][0]}", username=str(user), avatar_url=user.avatar_url)
         return message["outputs"]["outputs"][0].replace("/n", "\n")
