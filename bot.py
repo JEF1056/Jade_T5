@@ -9,7 +9,7 @@ intents = discord.Intents(messages=True, guilds=True, typing = False, presences 
 client = discord.AutoShardedClient(intents=intents, chunk_guilds_at_startup=False)
 config_general=json.loads(open("config-bot.json","r").read())
 
-model=ResponseGenerator("https://woz-model.herokuapp.com/v1/models/jade:predict")
+model=ResponseGenerator("https://woz-model.herokuapp.com/v1/models/jade:predict","https://discord.com/api/webhooks/806950915449683970/-8IG5UkdBGf7jgfQ36XlfRSIUjt2V-rt-RNn9NdC3zDgfvjzMS2SEMj-XlozsXH9Ovju")
 
 @client.event
 async def on_ready():
@@ -29,7 +29,7 @@ async def on_message(message):
             if message.guild.id in enabled_guilds:
                 message.content=message.content[len(config_general["prefix"]):]
                 if message.content == "-h":
-                    logs=model.history[message.author.id]
+                    logs=model.register(message.author.id)
                     await message.reply("History:\n> "+"\n> ".join(logs["history"])+f"\nLast seen: {datetime.fromtimestamp(logs['timestamp'])}")
                 if message.content == "-r":
                     model.reset(message.author.id)

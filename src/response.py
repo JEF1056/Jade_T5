@@ -24,6 +24,7 @@ class ResponseGenerator:
                 self.history[id]["timestamp"]=timestamp
         else:
             self.history[id]={"history":[],"timestamp":timestamp}
+        return self.history[id]
     
     def reset(self, id):
         self.history[id]={"history":[],"timestamp":time.time()}
