@@ -32,7 +32,7 @@ async def on_message(message):
                 if message.content == "-h":
                     logs=model.register(message.author.id, time.time())
                     await message.reply("History:\n> "+"\n> ".join(logs["history"])+f"\nLast seen: {datetime.fromtimestamp(logs['timestamp'])}")
-                if message.content == "-r":
+                elif message.content == "-r":
                     model.reset(message.author.id)
                     await message.reply("Successfully reset your history with Jade")
                 else:
