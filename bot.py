@@ -4,6 +4,7 @@ from src.response import ResponseGenerator
 import json
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+import time
 
 intents = discord.Intents(messages=True, guilds=True, typing = False, presences = False, members=False)
 client = discord.AutoShardedClient(intents=intents, chunk_guilds_at_startup=False)
@@ -29,7 +30,7 @@ async def on_message(message):
             if message.guild.id in enabled_guilds:
                 message.content=message.content[len(config_general["prefix"]):]
                 if message.content == "-h":
-                    logs=model.register(message.author.id)
+                    logs=model.register(message.author.id, time.time())
                     await message.reply("History:\n> "+"\n> ".join(logs["history"])+f"\nLast seen: {datetime.fromtimestamp(logs['timestamp'])}")
                 if message.content == "-r":
                     model.reset(message.author.id)
