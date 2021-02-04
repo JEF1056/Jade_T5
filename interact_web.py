@@ -27,7 +27,7 @@ class ResponseGenerator:
         message = json.loads(response.text)
         if "error" in message or debug: 
             print(f"{message}")
-            return message
+            if "error" in message: return str(message)
         self.history.append(inp)
         self.history.append("Jade: "+message["outputs"]["outputs"][0])
         self.history = self.history[-20:]
