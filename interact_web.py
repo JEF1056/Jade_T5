@@ -2,7 +2,6 @@ import re
 import json
 import requests
 import argparse
-import urllib
 
 def s2b(v):
     if isinstance(v, bool): return v
@@ -31,7 +30,7 @@ class ResponseGenerator:
             'ï':'i', 'ð':'o', 'ñ':'n', 'ń':'n', 'ò':'o', 'ó':'o', 'ô':'o', 'õ':'o', 'ö':'o', 'ø':'o', 'ù':'u',
             'ú':'u', 'û':'u', 'ü':'u', 'ý':'y', 'ý':'y', 'þ':'b', 'ÿ':'y', 'ƒ':'f',
             'ă':'a', 'î':'i', 'â':'a', 'ș':'s', 'ț':'t', 'Ă':'A', 'Î':'I', 'Â':'A', 'Ș':'S', 'Ț':'T',}
-        self.alphabets= json.load(urllib.request.urlopen("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt"))
+        self.alphabets= json.load(requests.get("https://raw.githubusercontent.com/JEF1056/clean-discord/master/src/alphabets.txt"))
         for alphabet in self.alphabets[1:]:
             alphabet=alphabet.decode("utf-8")
             for ind, char in enumerate(alphabet):
