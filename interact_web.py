@@ -11,16 +11,17 @@ def s2b(v):
     else: raise argparse.ArgumentTypeError('Boolean value expected.')
     
 parser = argparse.ArgumentParser(description='Export checkpoints for serving')
-parser.add_argument('-url', type=str, default="https://woz-model.herokuapp.com/v1/models/jade:predict",
+parser.add_argument('-url', type=str, default="woz-model.herokuapp.com",
                     help='Link to the server hosting the model')
 parser.add_argument("-debug", type=s2b, nargs='?', const=True, default=False,
                     help="debugging flag")
 args = parser.parse_args()
 
+args.url="https://"+args.url+"/v1/models/jade:predict"
 
 class ResponseGenerator:    
-    def __init__(self, url,webhook_url): 
-        self.history={}
+    def __init__(self, url): 
+        self.history=[]
         self.url=url
         self.normalize_chars={'Š':'S', 'š':'s', 'Ð':'Dj','Ž':'Z', 'ž':'z', 'À':'A', 'Á':'A', 'Â':'A', 'Ã':'A', 'Ä':'A',
             'Å':'A', 'Æ':'A', 'Ç':'C', 'È':'E', 'É':'E', 'Ê':'E', 'Ë':'E', 'Ì':'I', 'Í':'I', 'Î':'I',
@@ -65,10 +66,11 @@ class ResponseGenerator:
         inp= self.clean(username, author=True)+": "+self.clean(inp)
         inpdata = '{"inputs": ["Input: '+'/b'.join(self.history+[inp])+'"]}'
         response = requests.post(self.url.encode("utf-8"), data=inpdata.encode("utf-8"))
+        if debug: print(response.text)
         message = json.loads(response.text)
-        if "error" in message or debug: 
+        if "error" in message: 
             print(f"{message}")
-            if "error" in message: return str(message)
+            return str(message)
         self.history.append(inp)
         self.history.append("Jade: "+message["outputs"]["outputs"][0])
         self.history = self.history[-10:]
