@@ -40,6 +40,6 @@ saved_model_path = model.export(
     args.out,
     checkpoint_step=-1,  # use most recent
     beam_size=1,  # no beam search
-    temperature=0.90,  # sample according to predicted distribution
+    temperature=0.85,  # sample according to predicted distribution
 )
 print("Model saved to:", saved_model_path)
