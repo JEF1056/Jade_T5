@@ -13,6 +13,8 @@ def nq_dataset_fn(split, shuffle_files=False):
     del shuffle_files
     # Load lines from the text file as examples.
     ds = tf.data.TextLineDataset(nq_tsv_path[split])
+    ds.shard(8, 8)
+    ds.shuffle(buffer_size=10000)
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.map(
     functools.partial(tf.io.decode_csv, record_defaults=["", ""],
