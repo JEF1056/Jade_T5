@@ -14,9 +14,9 @@ parser.add_argument('-out', type=str, default=None,
                     help='Directory to save output')
 parser.add_argument('-size', type=str, default="small",
                     help='an integer for the accumulator')
-args = parser.parse_args()
 parser.add_argument('-tpu_topology', type=str, default="v3-8", choices=["v2-8","v3-8"],
                     help='train file')
+args = parser.parse_args()
 
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
 # Limit number of checkpoints to fit within 5GB (if possible).
