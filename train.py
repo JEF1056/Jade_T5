@@ -30,10 +30,14 @@ parser.add_argument('-model_size', type=str, default="small", choices=["small", 
                     help='train file')
 parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, default=False,
                     help="eval model after training")
+parser.add_argument('-taskname', type=str, default="jade-qa",
+                    help='name of the task')
+parser.add_argument('-path', type=str, default="jade-qa",
+                    help='name of the task')
 args = parser.parse_args()
 
 with open("config.json", "w") as f:
-    json.dump({"train":os.path.join(args.dir,"data", args.train), "validation": os.path.join(args.dir,"data", args.val)},f)
+    json.dump({"train":os.path.join(args.dir,"data", args.train), "validation": os.path.join(args.dir,"data", args.val), "taskname":args.taskname},f)
 import src.createtask
 args.tpu_address = f"grpc://{args.tpu_address}:8470"
 
@@ -92,7 +96,7 @@ model = t5.models.MtfModel(
 )
 
 model.finetune(
-    mixture_or_task_name="jade_qa",
+    mixture_or_task_name=args.taskname,
     pretrained_model_dir=PRETRAINED_DIR,
     finetune_steps=args.steps
 )
@@ -100,7 +104,7 @@ model.finetune(
 if args.eval:
     model.batch_size = train_batch_size * 4
     model.eval(
-        mixture_or_task_name="jade_qa",
+        mixture_or_task_name=args.taskname,
         checkpoint_steps="all"
     )
     

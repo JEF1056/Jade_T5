@@ -44,7 +44,7 @@ def preprocess(ds):
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
   
 t5.data.TaskRegistry.add(
-    "jade_qa",
+    nq_tsv_path["taskname"],
     # Specify the task type.
     t5.data.Task,
     # Supply a function which returns a tf.data.Dataset.
