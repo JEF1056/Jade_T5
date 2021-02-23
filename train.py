@@ -30,9 +30,9 @@ parser.add_argument('-model_size', type=str, default="small", choices=["small", 
                     help='train file')
 parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, default=False,
                     help="eval model after training")
-parser.add_argument('-taskname', type=str, default="jade-qa",
+parser.add_argument('-taskname', type=str, default="jade_qa",
                     help='name of the task')
-parser.add_argument('-path', type=str, default="jade-qa",
+parser.add_argument('-path', type=str, default="jade_qa",
                     help='name of the task')
 args = parser.parse_args()
 
