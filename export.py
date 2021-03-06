@@ -12,6 +12,8 @@ parser.add_argument('-dir', type=str, required=True,
                     help='Directory of model checkpoints (can/should be a gs:// link)')
 parser.add_argument('-out', type=str, default=None,
                     help='Directory to save output')
+parser.add_argument('-name', type=str, default=None,
+                    help='Directory to save output')
 parser.add_argument('-size', type=str, default="small",
                     help='an integer for the accumulator')
 parser.add_argument('-tpu_topology', type=str, default="v3-8", choices=["v2-8","v3-8"],
@@ -49,4 +51,7 @@ saved_model_path = model.export(
     beam_size=1,  # no beam search
     temperature=0.90,  # sample according to predicted distribution
 )
-print("Model saved to:", saved_model_path)
+
+os.rename(saved_model_path, os.path.join(args.out, args.name))
+
+print("Model saved to:", os.path.join(args.out, args.name))
