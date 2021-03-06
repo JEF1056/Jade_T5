@@ -29,9 +29,8 @@ predict_fn = load_predict_fn(args.dir)
 
 @app.route("/")
 def index():
-    if request.method == 'POST':
-        data = request.get_json()
-        return predict_fn(data["inputs"])[0].decode('utf-8')
+    data = request.get_json()
+    return predict_fn(data["inputs"])[0].decode('utf-8')
         
 if __name__ == "__main__":
-    app.run(threaded=True, host="0.0.0.0", port=8080)
+    app.run(threaded=True, host="0.0.0.0", port=8051)
