@@ -16,8 +16,10 @@ parser.add_argument('-name', type=str, default=None,
                     help='Directory to save output')
 parser.add_argument('-size', type=str, default="small",
                     help='an integer for the accumulator')
-parser.add_argument('-tpu_topology', type=str, default="v3-8", choices=["v2-8","v3-8"],
-                    help='train file')
+parser.add_argument('-temperature', type=float, default=0.9,
+                    help='model temperature')
+parser.add_argument('-beams', type=int, default=1,
+                    help='model temperature')
 args = parser.parse_args()
 
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
@@ -28,11 +30,6 @@ model_parallelism, train_batch_size = {
     "large": (8, 64),
     "3B": (8, 16),
     "11B": (8, 16)}[args.size]
-
-if args.tpu_topology == "v3-8":
-    print("Increasing batches for larger TPU")
-    model_parallelism=model_parallelism*4
-    train_batch_size=train_batch_size*2
 
 model = t5.models.MtfModel(
     tpu=False,
@@ -48,8 +45,8 @@ model.batch_size = 1 # make one prediction per call
 saved_model_path = model.export(
     args.out,
     checkpoint_step=-1,  # use most recent
-    beam_size=1,  # no beam search
-    temperature=0.90,  # sample according to predicted distribution
+    beam_size=args.beams,  # no beam search
+    temperature=args.temperature,  # sample according to predicted distribution
 )
 
 os.rename(saved_model_path, os.path.join(args.out, args.name))
