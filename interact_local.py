@@ -4,6 +4,7 @@ import argparse
 import json
 from flask import Flask, request
 from flask_cors import CORS
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -35,8 +36,9 @@ def index():
     if request.method == 'POST':
         data = request.get_json()
         if data==None: data=json.loads(request.data)
-        print(data)
-        return predict_fn(data["inputs"])[0].decode('utf-8')
+        t1=time.time()
+        ret_data=predict_fn(data["inputs"])[0].decode('utf-8')
+        return {"output":ret_data, "timedelta": str(time.time()-t1)}
         
 if __name__ == "__main__":
     app.run(threaded=True, host="0.0.0.0", port=8051)
