@@ -32,7 +32,7 @@ predict_fn = load_predict_fn(args.dir)
 def index():
     if request.method == 'POST':
         data = request.get_json()
-        if data==None: data=json.loads(request.text)
+        if data==None: data=json.loads(request.data)
         return predict_fn(data["inputs"])[0].decode('utf-8')
         
 if __name__ == "__main__":
