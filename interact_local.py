@@ -3,8 +3,10 @@ import tensorflow_text  # Required to run exported model.
 import argparse
 import json
 from flask import Flask, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, help='folder containing the serving model', required=True)

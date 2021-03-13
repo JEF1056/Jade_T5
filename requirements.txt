@@ -2,3 +2,5 @@ t5
 tensorflow
 tensorflow-datasets
 tensorflow-text
+flask
+flask-cors
