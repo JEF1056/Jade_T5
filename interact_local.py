@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow_text  # Required to run exported model.
 import argparse
+import json
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -31,6 +32,7 @@ predict_fn = load_predict_fn(args.dir)
 def index():
     if request.method == 'POST':
         data = request.get_json()
+        if data==None: data=json.loads(request.text)
         return predict_fn(data["inputs"])[0].decode('utf-8')
         
 if __name__ == "__main__":
