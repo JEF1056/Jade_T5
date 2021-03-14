@@ -11,6 +11,8 @@ CORS(app)
 
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, help='folder containing the serving model', required=True)
+parser.add_argument('-ip', type=str, help='ip address to start the model server on', default="0.0.0.0")
+parser.add_argument('-port', type=int, help='port to start the model server on', default=8051)
 args = parser.parse_args()
 
 def load_predict_fn(model_path):
@@ -41,4 +43,4 @@ def index():
         return {"output":ret_data, "timedelta": str(time.time()-t1)}
         
 if __name__ == "__main__":
-    app.run(threaded=True, host="0.0.0.0", port=8051)
+    app.run(threaded=True, host=args.ip, port=args.port)
