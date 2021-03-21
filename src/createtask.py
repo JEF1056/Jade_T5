@@ -36,9 +36,7 @@ def preprocess(ds):
     def to_inputs_and_targets(ex):
         """Map {"question": ..., "answer": ...}->{"inputs": ..., "targets": ...}."""
         return {
-            "inputs":
-                tf.strings.join(
-                    ["Input: ", normalize_text(ex["question"])]),
+            "inputs": tf.strings.join(["Input: ", normalize_text(ex["question"])]),
             "targets": normalize_text(ex["answer"])
         }
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
