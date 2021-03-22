@@ -51,3 +51,6 @@ def create_registry(train, val, taskname):
         # We'll use accuracy as our evaluation metric.
         metric_fns=[t5.evaluation.metrics.accuracy]
     )
+    
+if __name__ == '__main__':
+    create_registry("C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "all_mix")
