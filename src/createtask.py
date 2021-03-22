@@ -17,9 +17,9 @@ def nq_dataset_fn(split, shuffle_files=False):
     #ds.shuffle(buffer_size=10000)
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.map(
-    functools.partial(tf.io.decode_csv, record_defaults=["", ""],
-                      field_delim="\t", use_quote_delim=False),
-    num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    functools.partial(tf.io.decode_csv, field_delim="\t", use_quote_delim=False),
+                      num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    
     ds = ds.map(lambda *ex: dict(zip(["question", "answer"], ex)))
     return ds
 
