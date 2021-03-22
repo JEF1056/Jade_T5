@@ -31,10 +31,12 @@ parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, defau
                     help="eval model after training")
 parser.add_argument('-taskname', type=str, default="jade_qa",
                     help='name of the task')
+parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
+                    help='compression the dataset is compressed with')
 args = parser.parse_args()
 
 from src.createtask import create_registry
-create_registry(os.path.join(args.dir, args.train), os.path.join(args.dir, args.val), args.taskname)
+create_registry(os.path.join(args.dir, args.train), os.path.join(args.dir, args.val), args.taskname, args.compression)
 args.tpu_address = f"grpc://{args.tpu_address}:8470"
 
 if args.tpu_address != None:

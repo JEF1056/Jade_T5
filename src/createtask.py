@@ -1,14 +1,12 @@
-import t5
+#import t5
 import functools
 import tensorflow.compat.v1 as tf
 import tensorflow_datasets as tfds
 
-def nq_dataset_fn(split, shuffle_files=False):
+def dataset_fn(split):
     global nq_tsv_path
-    # We only have one file for each split.
-    del shuffle_files
     # Load lines from the text file as examples.
-    ds = tf.data.TextLineDataset(nq_tsv_path[split], compression_type="GZIP")
+    ds = tf.data.TextLineDataset(nq_tsv_path[split], compression_type=nq_tsv_path["compression"])
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.shuffle(buffer_size=10000)
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=["",""], field_delim="\t", use_quote_delim=False),
@@ -31,9 +29,9 @@ def preprocess(ds):
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
 
-def create_registry(train, val, taskname):
+def create_registry(train, val, taskname, compression_type):
     global nq_tsv_path
-    nq_tsv_path={"train":train, "validation":val}
+    nq_tsv_path={"train":train, "validation":val, "compression": compression_type}
     print("A few raw validation examples...")
     for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
         print(ex)
@@ -42,7 +40,7 @@ def create_registry(train, val, taskname):
         # Specify the task type.
         t5.data.Task,
         # Supply a function which returns a tf.data.Dataset.
-        dataset_fn=nq_dataset_fn,
+        dataset_fn=dataset_fn,
         splits=["train", "validation"],
         # Supply a function which preprocesses text from the tf.data.Dataset.
         text_preprocessor=[preprocess],
@@ -53,4 +51,4 @@ def create_registry(train, val, taskname):
     )
     
 if __name__ == '__main__':
-    create_registry("C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "all_mix")
+    create_registry("C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "all_mix", "GZIP")
