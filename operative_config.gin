@@ -13,8 +13,8 @@ d_ff = 2048
 d_kv = 64
 d_model = 512
 dropout_rate = 0.1
-init_checkpoint = 'gs://t5-data/pretrained_models/small/model.ckpt-1167000'
-MIXTURE_NAME = 'jade_qa'
+init_checkpoint = 'gs://t5-data/pretrained_models/small/model.ckpt-1000000'
+MIXTURE_NAME = 'all_mix'
 num_heads = 8
 num_layers = 6
 
