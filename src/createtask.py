@@ -1,4 +1,4 @@
-#import t5
+import t5
 import functools
 import tensorflow.compat.v1 as tf
 import tensorflow_datasets as tfds
