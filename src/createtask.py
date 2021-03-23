@@ -3,8 +3,9 @@ import functools
 import tensorflow.compat.v1 as tf
 import tensorflow_datasets as tfds
 
-def dataset_fn(split):
+def dataset_fn(split, shuffle_files=False):
     global nq_tsv_path
+    del shuffle_files
     # Load lines from the text file as examples.
     ds = tf.data.TextLineDataset(nq_tsv_path[split], compression_type=nq_tsv_path["compression"])
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
