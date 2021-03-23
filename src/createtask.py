@@ -16,16 +16,11 @@ def dataset_fn(split, shuffle_files=False):
     return ds
 
 def preprocess(ds):
-    def normalize_text(text):
-        #print(f"trying {text}")
-        #text=tf.strings.unicode_encode(text, "UTF-8")
-        return text
-
     def to_inputs_and_targets(ex):
         """Map {"question": ..., "answer": ...}->{"inputs": ..., "targets": ...}."""
         return {
-            "inputs": normalize_text(ex["question"]),
-            "targets": normalize_text(ex["answer"])
+            "inputs": ex["question"],
+            "targets": ex["answer"]
         }
     return ds.map(to_inputs_and_targets, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
