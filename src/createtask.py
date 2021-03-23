@@ -33,7 +33,7 @@ def create_registry(train, val, taskname, compression_type):
     global nq_tsv_path
     nq_tsv_path={"train":train, "validation":val, "compression": compression_type}
     print("A few raw validation examples...")
-    for ex in tfds.as_numpy(nq_dataset_fn("validation").take(5)):
+    for ex in tfds.as_numpy(dataset_fn("validation").take(5)):
         print(ex)
     t5.data.TaskRegistry.add(
         taskname,
