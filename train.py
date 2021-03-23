@@ -73,7 +73,7 @@ model_parallelism, train_batch_size, keep_checkpoint_max = {
     "3B": (8, 16, 1),
     "11B": (8, 4, 1)}[MODEL_SIZE]
 
-if args.tpu_topology == "v3-8" and args.model_size in ["small", "base", "large"]:
+if args.tpu_topology == "v3-8" and args.model_size in ["small"]:
     print("Increasing batches for larger TPU")
     model_parallelism=model_parallelism*4
     train_batch_size=train_batch_size*2
