@@ -3,3 +3,4 @@
 config*
 model*
 *.tar.gz
+*.txt.gz

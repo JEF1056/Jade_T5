@@ -1,6 +1,5 @@
 import t5
 import os
-import json
 import warnings
 import argparse
 import src.helpers as helpers
@@ -12,9 +11,9 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, default="gs://conversation-t5",
                     help='link to google storage bucket')
-parser.add_argument('-train', type=str, default="context-train.txt",
+parser.add_argument('-train', type=str, default="data/context-train.txt",
                     help='train file')
-parser.add_argument('-val', type=str, default="context-val.txt",
+parser.add_argument('-val', type=str, default="data/context-val.txt",
                     help='val file')
 parser.add_argument('-tpu_address', type=str, default=None,
                     help='TPU ip address')
@@ -32,13 +31,12 @@ parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, defau
                     help="eval model after training")
 parser.add_argument('-taskname', type=str, default="jade_qa",
                     help='name of the task')
-parser.add_argument('-path', type=str, default="jade_qa",
-                    help='name of the task')
+parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
+                    help='compression the dataset is compressed with')
 args = parser.parse_args()
 
-with open("config.json", "w") as f:
-    json.dump({"train":os.path.join(args.dir,"data", args.train), "validation": os.path.join(args.dir,"data", args.val), "taskname":args.taskname},f)
-import src.createtask
+from src.createtask import create_registry
+create_registry(os.path.join(args.dir, args.train), os.path.join(args.dir, args.val), args.taskname, args.compression)
 args.tpu_address = f"grpc://{args.tpu_address}:8470"
 
 if args.tpu_address != None:
@@ -75,7 +73,7 @@ model_parallelism, train_batch_size, keep_checkpoint_max = {
     "3B": (8, 16, 1),
     "11B": (8, 4, 1)}[MODEL_SIZE]
 
-if args.tpu_topology == "v3-8" and args.model_size == "small":
+if args.tpu_topology == "v3-8" and args.model_size in ["small"]:
     print("Increasing batches for larger TPU")
     model_parallelism=model_parallelism*4
     train_batch_size=train_batch_size*2
