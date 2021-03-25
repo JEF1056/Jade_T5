@@ -1,9 +1,10 @@
 import t5
 import os
 import argparse
-import src.createtask
 import warnings
 import logging as py_logging
+from src.createtask import create_registry
+create_registry("src/temp.txt", "src/temp.txt", "all_mix", None)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 py_logging.root.setLevel('INFO')
 
