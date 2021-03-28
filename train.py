@@ -67,16 +67,11 @@ MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
 # Limit number of checkpoints to fit within 5GB (if possible).
 model_parallelism, train_batch_size, keep_checkpoint_max = {
-    "small": (1, 256, 16),
-    "base": (2, 128, 8),
-    "large": (8, 64, 4),
+    "small": (8, 512, 16),
+    "base": (8, 256, 8),
+    "large": (8, 128, 4),
     "3B": (8, 16, 1),
     "11B": (8, 4, 1)}[MODEL_SIZE]
-
-if args.tpu_topology == "v3-8" and args.model_size in ["small"]:
-    print("Increasing batches for larger TPU")
-    model_parallelism=model_parallelism*4
-    train_batch_size=train_batch_size*2
 
 tf.io.gfile.makedirs(MODEL_DIR)
 # The models from our paper are based on the Mesh Tensorflow Transformer.
