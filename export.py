@@ -20,7 +20,9 @@ parser.add_argument('-size', type=str, default="small",
 parser.add_argument('-temperature', type=float, default=0.9,
                     help='model temperature')
 parser.add_argument('-beams', type=int, default=1,
-                    help='model temperature')
+                    help='number of beams to use')
+parser.add_argument('-batch_size', type=int, default=1,
+                    help='model batch size')
 args = parser.parse_args()
 
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
@@ -42,7 +44,7 @@ model = t5.models.MtfModel(
 print("~~Exporting~~")
 export_dir = os.path.join(args.dir, "export") if args.out == None else args.out
 
-model.batch_size = 1 # make one prediction per call
+model.batch_size = args.batch_size # make one prediction per call
 saved_model_path = model.export(
     args.out,
     checkpoint_step=-1,  # use most recent
