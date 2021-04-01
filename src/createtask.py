@@ -9,7 +9,7 @@ def dataset_fn(split, shuffle_files=False):
     # Load lines from the text file as examples.
     ds = tf.data.TextLineDataset(nq_tsv_path[split], compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
-    ds = ds.shuffle(buffer_size=10000000)
+    ds = ds.shuffle(buffer_size=600000)
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=["",""], field_delim="\t", use_quote_delim=False),
                 num_parallel_calls=tf.data.experimental.AUTOTUNE)
     ds = ds.map(lambda *ex: dict(zip(["question", "answer"], ex)))
