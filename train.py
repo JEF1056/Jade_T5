@@ -25,7 +25,7 @@ parser.add_argument('-out_len', type=int, default=512,
                     help='train file')
 parser.add_argument('-steps', type=int, default=50000,
                     help='train file')
-parser.add_argument('-model_size', type=str, default="small", choices=["small", "base", "large", "3B", "11B"],
+parser.add_argument('-model_size', type=str, default="small", choices=["small", "t5.1.1.small", "base", "large", "3B", "11B"],
                     help='train file')
 parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, default=False,
                     help="eval model after training")
@@ -68,6 +68,7 @@ MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 # Limit number of checkpoints to fit within 5GB (if possible).
 model_parallelism, train_batch_size, keep_checkpoint_max = {
     "small": (1, 512, 16),
+    "t5.1.1.small": (1, 512, 16),
     "base": (2, 256, 8),
     "large": (4, 128, 4),
     "3B": (8, 16, 1),
