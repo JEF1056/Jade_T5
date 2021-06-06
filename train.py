@@ -27,8 +27,6 @@ parser.add_argument('-steps', type=int, default=50000,
                     help='train file')
 parser.add_argument('-model_size', type=str, default="small", choices=["small", "t5.1.1.small", "base", "large", "3B", "11B"],
                     help='train file')
-parser.add_argument("-eval", type=helpers.str2bool, nargs='?', const=True, default=False,
-                    help="eval model after training")
 parser.add_argument('-taskname', type=str, default="jade_qa",
                     help='name of the task')
 parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
@@ -67,8 +65,8 @@ MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
 # Limit number of checkpoints to fit within 5GB (if possible).
 model_parallelism, train_batch_size, keep_checkpoint_max = {
-    "small": (1, 512, 16),
-    "t5.1.1.small": (1, 512, 16),
+    "small": (1, 1024, 4),
+    "t5.1.1.small": (1, 1024, 4),
     "base": (2, 256, 8),
     "large": (4, 128, 4),
     "3B": (8, 16, 1),
@@ -94,22 +92,3 @@ model.finetune(
     pretrained_model_dir=PRETRAINED_DIR,
     finetune_steps=args.steps
 )
-
-if args.eval:
-    model.batch_size = train_batch_size * 4
-    model.eval(
-        mixture_or_task_name=args.taskname,
-        checkpoint_steps="all"
-    )
-    
-if args.export:
-    export_dir = os.path.join(MODEL_DIR, "export")
-
-    model.batch_size = 1 # make one prediction per call
-    saved_model_path = model.export(
-        args.out,
-        checkpoint_step=-1,  # use most recent
-        beam_size=1,  # no beam search
-        temperature=0.90,  # sample according to predicted distribution
-    )
-    print("Model saved to:", saved_model_path)
