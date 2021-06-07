@@ -25,8 +25,6 @@ parser.add_argument('-out_len', type=int, default=512,
                     help='train file')
 parser.add_argument('-steps', type=int, default=50000,
                     help='train file')
-parser.add_argument('-batch_size', type=int, default=None,
-                    help='train batch size')
 parser.add_argument('-model_size', type=str, default="small", choices=["small", "t5.1.1.small", "base", "large", "3B", "11B"],
                     help='train file')
 parser.add_argument('-taskname', type=str, default="jade_qa",
@@ -73,7 +71,6 @@ model_parallelism, train_batch_size, keep_checkpoint_max = {
     "large": (4, 128, 4),
     "3B": (8, 16, 1),
     "11B": (8, 4, 1)}[MODEL_SIZE]
-if args.batch_size: train_batch_size=args.batch_size
 
 tf.io.gfile.makedirs(MODEL_DIR)
 # The models from our paper are based on the Mesh Tensorflow Transformer.
