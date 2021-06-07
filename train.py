@@ -65,8 +65,8 @@ MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
 # Limit number of checkpoints to fit within 5GB (if possible).
 model_parallelism, train_batch_size, keep_checkpoint_max = {
-    "small": (1, 1024, 4),
-    "t5.1.1.small": (1, 1024, 4),
+    "small": (1, 512, 4),
+    "t5.1.1.small": (1, 512, 4),
     "base": (2, 256, 8),
     "large": (4, 128, 4),
     "3B": (8, 16, 1),
@@ -81,7 +81,7 @@ model = t5.models.MtfModel(
     model_parallelism=model_parallelism,
     batch_size=train_batch_size,
     sequence_length={"inputs": args.in_len, "targets": args.out_len},
-    learning_rate_schedule=0.003,
+    learning_rate_schedule=0.001,
     save_checkpoints_steps=2500,
     keep_checkpoint_max=keep_checkpoint_max,
     iterations_per_loop=500,
