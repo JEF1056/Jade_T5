@@ -67,8 +67,8 @@ MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 model_parallelism, train_batch_size, keep_checkpoint_max = {
     "small": (1, 512, 4),
     "t5.1.1.small": (1, 512, 4),
-    "base": (2, 256, 8),
-    "large": (4, 128, 4),
+    "base": (2, 256, 2),
+    "large": (4, 128, 2),
     "3B": (8, 16, 1),
     "11B": (8, 4, 1)}[MODEL_SIZE]
 
