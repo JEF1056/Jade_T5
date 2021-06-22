@@ -96,7 +96,7 @@ model = t5.models.MtfModel(
 )
 
 model.finetune(
-    mixture_or_task_name=args.taskname,
+    mixture_or_task_name='all_mix',
     pretrained_model_dir=PRETRAINED_DIR,
     finetune_steps=args.steps
 )
