@@ -36,7 +36,7 @@ DEFAULT_OUTPUT_FEATURES = {
 
 def create_registry(train, val, taskname, compression_type):
     global nq_tsv_path
-    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~registering {taskname}}")
+    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~registering {taskname}")
     nq_tsv_path={"train":train, "validation":val, "compression": compression_type}
     seqio.TaskRegistry.add(
         taskname,
