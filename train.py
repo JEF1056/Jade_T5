@@ -1,8 +1,8 @@
 import t5
 import os
+import seqio
 import warnings
 import argparse
-import src.helpers as helpers
 import tensorflow.compat.v1 as tf
 from contextlib import contextmanager
 import logging as py_logging
@@ -11,6 +11,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, default="gs://conversation-t5",
                     help='link to google storage bucket')
+parser.add_argument('-tasknames', type=str, default="",
+                    help='name of the task')
 parser.add_argument('-train', type=str, default="data/context-train.txt",
                     help='train file')
 parser.add_argument('-val', type=str, default="data/context-val.txt",
@@ -27,14 +29,20 @@ parser.add_argument('-steps', type=int, default=50000,
                     help='train file')
 parser.add_argument('-model_size', type=str, default="small", choices=["small", "t5.1.1.small", "base", "large", "3B", "11B"],
                     help='train file')
-parser.add_argument('-taskname', type=str, default="jade_qa",
-                    help='name of the task')
 parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
                     help='compression the dataset is compressed with')
 args = parser.parse_args()
 
 from src.createtask import create_registry
-create_registry(os.path.join(args.dir, args.train), os.path.join(args.dir, args.val), args.taskname, args.compression)
+for index, name in args.tasknames:
+    create_registry(os.path.join(args.dir, "data",args.train[index]), os.path.join(args.dir, "data", args.val[index]), name, args.compression)
+
+seqio.MixtureRegistry.add(
+    "all_mix",
+    ["nq_context_free", "triviaqa_context_free"],
+    default_rate=1.0
+)
+
 args.tpu_address = f"grpc://{args.tpu_address}:8470"
 
 if args.tpu_address != None:
