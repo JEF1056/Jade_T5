@@ -11,11 +11,11 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, default="gs://conversation-t5",
                     help='link to google storage bucket')
-parser.add_argument('-tasknames', type=str, default="",
+parser.add_argument('-tasknames', nargs='+', type=str, default="mix",
                     help='name of the task')
-parser.add_argument('-train', type=str, default="data/context-train.txt",
+parser.add_argument('-train', nargs='+', type=str,  default="context-train.txt",
                     help='train file')
-parser.add_argument('-val', type=str, default="data/context-val.txt",
+parser.add_argument('-val', nargs='+', type=str, default="context-val.txt",
                     help='val file')
 parser.add_argument('-tpu_address', type=str, default=None,
                     help='TPU ip address')
