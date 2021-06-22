@@ -39,7 +39,7 @@ for index, name in args.tasknames:
 
 seqio.MixtureRegistry.add(
     "all_mix",
-    ["nq_context_free", "triviaqa_context_free"],
+    args.tasknames,
     default_rate=1.0
 )
 
