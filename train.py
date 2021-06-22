@@ -34,7 +34,7 @@ parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB
 args = parser.parse_args()
 
 from src.createtask import create_registry
-for index, name in args.tasknames:
+for index, name in enumerate(args.tasknames):
     create_registry(os.path.join(args.dir, "data",args.train[index]), os.path.join(args.dir, "data", args.val[index]), name, args.compression)
 
 seqio.MixtureRegistry.add(
