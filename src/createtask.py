@@ -1,5 +1,6 @@
 import t5
 import os
+import gs
 import seqio
 import functools
 import tensorflow.compat.v1 as tf
@@ -8,7 +9,7 @@ def dataset_fn(split, shuffle_files=False):
     global nq_tsv_path
     del shuffle_files
     # Load lines from the text file as examples.
-    ds = tf.data.TextLineDataset([filename for filename in os.listdir(nq_tsv_path[split]) if filename.startswith(f'{nq_tsv_path["taskname"].replace("ccp", "context-ps")}-{split}')], compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
+    ds = tf.data.TextLineDataset([os.path.join(nq_tsv_path[split],filename) for filename in gs.listdir(nq_tsv_path[split]) if filename.startswith(f'{nq_tsv_path["taskname"].replace("ccp", "context-ps")}-{split}')], compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.shuffle(buffer_size=600000)
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=["",""], field_delim="\t", use_quote_delim=False),
