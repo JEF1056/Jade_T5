@@ -11,7 +11,7 @@ def dataset_fn(split, shuffle_files=False):
     global nq_tsv_path
     del shuffle_files
     # Load lines from the text file as examples.
-    files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split]) if str(filename.name).startswith(os.path.join(nq_tsv_path[split],f'{nq_tsv_path["taskname"]}-{split}'))]
+    files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split.split("-")[1]]) if str(filename.name).startswith(os.path.join(nq_tsv_path[split.split("-")[1]],split))]
     #print(len(files_to_read))
     #print(files_to_read[0:10])
     ds = tf.data.TextLineDataset(files_to_read, compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
@@ -43,7 +43,7 @@ DEFAULT_OUTPUT_FEATURES = {
 
 def create_registry(bucket, train, val, taskname, compression_type):
     global nq_tsv_path
-    nq_tsv_path={"bucket": bucket, "taskname":taskname, "train":train, "validation":val, "compression": compression_type}
+    nq_tsv_path={"bucket": bucket, "train":train, "validation":val, "compression": compression_type}
     print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~registering {taskname}: {nq_tsv_path}")
     seqio.TaskRegistry.add(
         taskname,
@@ -51,7 +51,7 @@ def create_registry(bucket, train, val, taskname, compression_type):
         source=seqio.FunctionDataSource(
             # Supply a function which returns a tf.data.Dataset.
             dataset_fn=dataset_fn,
-            splits=["train", "validation"]),
+            splits=[taskname+"-train", taskname+"-validation"]),
         # Supply a list of functions that preprocess the input tf.data.Dataset.
         preprocessors=[
             preprocess,
