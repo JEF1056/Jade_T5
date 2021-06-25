@@ -9,7 +9,7 @@ import logging as py_logging
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 parser = argparse.ArgumentParser(description='Finetune T5')
-parser.add_argument('-dir', type=str, default="gs://conversation-t5",
+parser.add_argument('-dir', type=str, default="conversation-t5",
                     help='link to google storage bucket')
 parser.add_argument('-tasknames', nargs='+', type=str, default="mix",
                     help='name of the task')
@@ -35,7 +35,7 @@ args = parser.parse_args()
 
 from src.createtask import create_registry
 for index, name in enumerate(args.tasknames):
-    create_registry(os.path.join(args.dir, "data",args.train[index]), os.path.join(args.dir, "data", args.val[index]), name, args.compression)
+    create_registry(args.dir, args.train[index], args.val[index], name, args.compression)
 
 seqio.MixtureRegistry.add(
     "all_mix",
@@ -64,7 +64,7 @@ def tf_verbosity_level(level):
     tf.logging.set_verbosity(og_level)
 
 MODEL_SIZE = args.model_size
-MODELS_DIR = os.path.join(args.dir, "models")
+MODELS_DIR = os.path.join("gs://"+args.dir, "models")
 # Public GCS path for T5 pre-trained model checkpoints
 BASE_PRETRAINED_DIR = "gs://t5-data/pretrained_models"
 PRETRAINED_DIR = os.path.join(BASE_PRETRAINED_DIR, MODEL_SIZE)
