@@ -11,7 +11,7 @@ def dataset_fn(split, shuffle_files=False):
     global nq_tsv_path
     del shuffle_files
     # Load lines from the text file as examples.
-    files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],nq_tsv_path[split],str(filename)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split]) if str(filename).startswith(f'{nq_tsv_path["taskname"].replace("ccp", "context-ps")}-{split}')]
+    files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split]) if str(filename.name).startswith(os.path.join(nq_tsv_path[split],f'{nq_tsv_path["taskname"]}-{split}'))]
     print(len(files_to_read))
     print(files_to_read[0:10])
     ds = tf.data.TextLineDataset(files_to_read, compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
