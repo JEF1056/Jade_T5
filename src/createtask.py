@@ -5,16 +5,27 @@ import functools
 from google.cloud import storage
 import tensorflow.compat.v1 as tf
 
-client = storage.Client()
-
 def dataset_fn(split, shuffle_files=False):
     global nq_tsv_path
     del shuffle_files
+    client = storage.Client()
     # Load lines from the text file as examples.
     files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split])]
     print(len(files_to_read))
     print(files_to_read[0:10])
     ds = tf.data.TextLineDataset(files_to_read, compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
+    # Split each "<question>\t<answer>" example into (question, answer) tuple.
+    ds = ds.shuffle(buffer_size=600000)
+    ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=["",""], field_delim="\t", use_quote_delim=False),
+                num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    ds = ds.map(lambda *ex: dict(zip(["question", "answer"], ex)))
+    return ds
+
+def dataset_fn_local(split, shuffle_files=False):
+    global nq_tsv_path
+    del shuffle_files
+    # Load lines from the text file as examples.
+    ds = tf.data.TextLineDataset(nq_tsv_path[split], compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.shuffle(buffer_size=600000)
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=["",""], field_delim="\t", use_quote_delim=False),
@@ -50,7 +61,7 @@ def create_registry(bucket, train, val, taskname, compression_type):
         # Specify the task source.
         source=seqio.FunctionDataSource(
             # Supply a function which returns a tf.data.Dataset.
-            dataset_fn=dataset_fn,
+            dataset_fn=dataset_fn if bucket else dataset_fn_local,
             splits=["train", "validation"]),
         # Supply a list of functions that preprocess the input tf.data.Dataset.
         preprocessors=[
