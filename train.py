@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 parser = argparse.ArgumentParser(description='Finetune T5')
 parser.add_argument('-dir', type=str, default="conversation-t5",
                     help='link to google storage bucket')
-parser.add_argument('-tasknames', nargs='+', type=str, default="mix",
+parser.add_argument('-tasknames', nargs='+', type=str, default="all-mix",
                     help='name of the task')
 parser.add_argument('-train', nargs='+', type=str,  default="context-train.txt",
                     help='train file')
@@ -31,11 +31,13 @@ parser.add_argument('-model_size', type=str, default="small", choices=["small", 
                     help='train file')
 parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
                     help='compression the dataset is compressed with')
+parser.add_argument('-storemode', type=str, default=None, choices=["gs", "local"],
+                    help='storemode')
 args = parser.parse_args()
 
 from src.createtask import create_registry
 for index, name in enumerate(args.tasknames):
-    create_registry(args.dir, args.train[index], args.val[index], name, args.compression)
+    create_registry(args.dir, args.train[index], args.val[index], name, args.compression, args.storemode)
 
 seqio.MixtureRegistry.add(
     "all_mix",
@@ -63,7 +65,8 @@ def tf_verbosity_level(level):
     tf.logging.set_verbosity(og_level)
 
 MODEL_SIZE = args.model_size
-MODELS_DIR = os.path.join("gs://"+args.dir, "models")
+if args.storemode=="gs": MODELS_DIR = os.path.join("gs://"+args.dir, "models")
+else: MODELS_DIR = os.path.join(args.dir, "models")
 # Public GCS path for T5 pre-trained model checkpoints
 BASE_PRETRAINED_DIR = "gs://t5-data/pretrained_models"
 PRETRAINED_DIR = os.path.join(BASE_PRETRAINED_DIR, MODEL_SIZE)

@@ -10,7 +10,11 @@ def dataset_fn(split, shuffle_files=False):
     del shuffle_files
     client = storage.Client()
     # Load lines from the text file as examples.
-    files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split])]
+    if nq_tsv_path["storemode"]=="gs":
+        files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split])]
+    else:
+        print(os.path.join(nq_tsv_path["bucket"], nq_tsv_path[split]))
+        files_to_read=[os.path.join(nq_tsv_path["bucket"],str(filename.name)) for filename in os.listdir(os.path.join(nq_tsv_path["bucket"], nq_tsv_path[split]))]
     print(len(files_to_read))
     print(files_to_read[0:10])
     ds = tf.data.TextLineDataset(files_to_read, compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
@@ -52,9 +56,9 @@ DEFAULT_OUTPUT_FEATURES = {
 }
 
 
-def create_registry(bucket, train, val, taskname, compression_type):
+def create_registry(bucket, train, val, taskname, compression_type, storemode):
     global nq_tsv_path
-    nq_tsv_path={"bucket": bucket, "train":train, "validation":val, "compression": compression_type}
+    nq_tsv_path={"bucket": bucket, "train":train, "validation":val, "compression": compression_type, "storemode": storemode}
     print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~registering {taskname}: {nq_tsv_path}")
     seqio.TaskRegistry.add(
         taskname,
