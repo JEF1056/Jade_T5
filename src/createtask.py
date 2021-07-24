@@ -14,7 +14,7 @@ def dataset_fn(split, shuffle_files=False):
         files_to_read=[os.path.join("gs://"+nq_tsv_path["bucket"],str(filename.name)) for filename in client.list_blobs(nq_tsv_path["bucket"], prefix=nq_tsv_path[split])]
     else:
         print(os.path.join(nq_tsv_path["bucket"], nq_tsv_path[split]))
-        files_to_read=[os.path.join(nq_tsv_path["bucket"],str(filename.name)) for filename in os.listdir(os.path.join(nq_tsv_path["bucket"], nq_tsv_path[split]))]
+        files_to_read=[os.path.join(nq_tsv_path["bucket"],str(filename)) for filename in os.listdir(os.path.join(nq_tsv_path["bucket"], nq_tsv_path[split]))]
     print(len(files_to_read))
     print(files_to_read[0:10])
     ds = tf.data.TextLineDataset(files_to_read, compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))

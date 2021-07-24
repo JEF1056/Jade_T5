@@ -31,7 +31,7 @@ parser.add_argument('-model_size', type=str, default="small", choices=["small", 
                     help='train file')
 parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
                     help='compression the dataset is compressed with')
-parser.add_argument('-storemode', type=str, default=None, choices=["gs", "local"],
+parser.add_argument('-storemode', type=str, default="gs", choices=["gs", "local"],
                     help='storemode')
 args = parser.parse_args()
 
