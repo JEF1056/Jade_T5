@@ -4,3 +4,5 @@ config*
 model*
 *.tar.gz
 *.txt.gz
+pretrained_models/small/checkpoint
+pretrained_models/small/operative_config.gin

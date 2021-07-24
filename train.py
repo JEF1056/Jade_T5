@@ -65,10 +65,14 @@ def tf_verbosity_level(level):
     tf.logging.set_verbosity(og_level)
 
 MODEL_SIZE = args.model_size
-if args.storemode=="gs": MODELS_DIR = os.path.join("gs://"+args.dir, "models")
-else: MODELS_DIR = os.path.join(args.dir, "models")
-# Public GCS path for T5 pre-trained model checkpoints
-BASE_PRETRAINED_DIR = "gs://t5-data/pretrained_models"
+if args.storemode=="gs": 
+    MODELS_DIR = os.path.join("gs://"+args.dir, "models")
+    # Public GCS path for T5 pre-trained model checkpoints
+    BASE_PRETRAINED_DIR = "gs://t5-data/pretrained_models"
+else: 
+    MODELS_DIR = os.path.join(args.dir, "models")
+    # Public GCS path for T5 pre-trained model checkpoints
+    BASE_PRETRAINED_DIR = "pretrained_models"
 PRETRAINED_DIR = os.path.join(BASE_PRETRAINED_DIR, MODEL_SIZE)
 MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 
