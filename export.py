@@ -4,7 +4,7 @@ import argparse
 import warnings
 import logging as py_logging
 from src.createtask import create_registry
-create_registry(None, "src/temp.txt", "src/temp.txt", "all_mix", None)
+create_registry(None, "src/temp.txt", "src/temp.txt", "all_mix", None, "local")
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 py_logging.root.setLevel('INFO')
 

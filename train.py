@@ -13,13 +13,15 @@ parser.add_argument('-dir', type=str, default="conversation-t5",
                     help='link to google storage bucket')
 parser.add_argument('-tasknames', nargs='+', type=str, default="all-mix",
                     help='name of the task')
+parser.add_argument('-gpus', nargs='+', type=str, default=None,
+                    help='available GPUs')
 parser.add_argument('-train', nargs='+', type=str,  default="context-train.txt",
                     help='train file')
 parser.add_argument('-val', nargs='+', type=str, default="context-val.txt",
                     help='val file')
 parser.add_argument('-tpu_address', type=str, default=None,
                     help='TPU ip address')
-parser.add_argument('-tpu_topology', type=str, default="v3-8", choices=["v2-8","v3-8"],
+parser.add_argument('-tpu_topology', type=str, default=None, choices=["v2-8","v3-8", None],
                     help='train file')
 parser.add_argument('-in_len', type=int, default=2048,
                     help='train file')
@@ -31,8 +33,14 @@ parser.add_argument('-model_size', type=str, default="small", choices=["small", 
                     help='train file')
 parser.add_argument('-compression', type=str, default=None, choices=[None, "ZLIB", "GZIP"],
                     help='compression the dataset is compressed with')
+parser.add_argument('-batch_size', type=int, default=None,
+                    help='number of batches')
+parser.add_argument('-max_checkpoints', type=int, default=None,
+                    help='maximum number of checkpoints')
 parser.add_argument('-storemode', type=str, default="gs", choices=["gs", "local"],
                     help='storemode')
+parser.add_argument('-paralellism', type=int, default=None,
+                    help='model_paralellism')
 args = parser.parse_args()
 
 from src.createtask import create_registry
@@ -85,12 +93,17 @@ model_parallelism, train_batch_size, keep_checkpoint_max = {
     "large": (4, 128, 2),
     "3B": (8, 16, 1),
     "11B": (8, 4, 1)}[MODEL_SIZE]
+if args.paralellism: model_paralellism=args.paralellism
+if args.batch_size: train_batch_size=args.batch_size
+if args.max_checkpoints: keep_checkpoint_max=args.max_checkpoints
 
 tf.io.gfile.makedirs(MODEL_DIR)
 # The models from our paper are based on the Mesh Tensorflow Transformer.
 model = t5.models.MtfModel(
     model_dir=MODEL_DIR,
     tpu=args.tpu_address,
+    mesh_devices=args.gpus,
+    mesh_shape=f'model:1,batch:{len(args.gpus)}',
     tpu_topology=args.tpu_topology,
     model_parallelism=model_parallelism,
     batch_size=train_batch_size,
