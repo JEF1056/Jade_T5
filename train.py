@@ -40,7 +40,7 @@ parser.add_argument('-max_checkpoints', type=int, default=None,
                     help='maximum number of checkpoints')
 parser.add_argument('-storemode', type=str, default="gs", choices=["gs", "local"],
                     help='storemode')
-parser.add_argument('-paralellism', type=int, default=None,
+parser.add_argument('-model_paralellism', type=int, default=None,
                     help='model_paralellism')
 args = parser.parse_args()
 
@@ -87,34 +87,51 @@ MODEL_DIR = os.path.join(MODELS_DIR, MODEL_SIZE)
 
 # Set parallelism and batch size to fit on v2-8 TPU (if possible).
 # Limit number of checkpoints to fit within 5GB (if possible).
-model_parallelism, train_batch_size, keep_checkpoint_max = {
-    "small": (1, 512, 4),
-    "t5.1.1.small": (1, 512, 4),
-    "base": (2, 256, 2),
-    "large": (4, 128, 2),
-    "3B": (8, 16, 1),
-    "11B": (8, 4, 1)}[MODEL_SIZE]
-if args.paralellism: model_paralellism=args.paralellism
+try:
+    model_parallelism, train_batch_size, keep_checkpoint_max = {
+        "small": (1, 512, 4),
+        "t5.1.1.small": (1, 512, 4),
+        "base": (2, 256, 2),
+        "large": (4, 128, 2),
+        "3B": (8, 16, 1),
+        "11B": (8, 4, 1)}[MODEL_SIZE]
+except:
+    model_parallelism, train_batch_size, keep_checkpoint_max=None,None,None
+    assert args.model_paralellism and args.batch_size and args.max_checkpoints, "Model not found in supported list. Cannot determine model paralellism, batch size, and number of checkpoints to keep automatically."
+if args.paralellism: model_paralellism=args.model_paralellism
 if args.batch_size: train_batch_size=args.batch_size
 if args.max_checkpoints: keep_checkpoint_max=args.max_checkpoints
 
 tf.io.gfile.makedirs(MODEL_DIR)
 # The models from our paper are based on the Mesh Tensorflow Transformer.
-model = t5.models.MtfModel(
-    model_dir=MODEL_DIR,
-    tpu=args.tpu_address,
-    mesh_devices=args.gpus,
-    mesh_shape=f'model:1,batch:{len(args.gpus)}',
-    tpu_topology=args.tpu_topology,
-    model_parallelism=model_parallelism,
-    batch_size=train_batch_size,
-    sequence_length={"inputs": args.in_len, "targets": args.out_len},
-    learning_rate_schedule=0.001,
-    save_checkpoints_steps=2500,
-    keep_checkpoint_max=keep_checkpoint_max,
-    iterations_per_loop=500,
-)
-
+if args.tpu_address:
+    model = t5.models.MtfModel(
+        model_dir=MODEL_DIR,
+        tpu=args.tpu_address,
+        tpu_topology=args.tpu_topology,
+        model_parallelism=model_parallelism,
+        batch_size=train_batch_size,
+        sequence_length={"inputs": args.in_len, "targets": args.out_len},
+        learning_rate_schedule=0.001,
+        save_checkpoints_steps=2500,
+        keep_checkpoint_max=keep_checkpoint_max,
+        iterations_per_loop=500,
+    )
+elif args.gpus:
+    model = t5.models.MtfModel(
+        model_dir=MODEL_DIR,
+        mesh_devices=args.gpus,
+        mesh_shape=f'model:1,batch:{len(args.gpus)}',
+        model_parallelism=model_parallelism,
+        batch_size=train_batch_size,
+        sequence_length={"inputs": args.in_len, "targets": args.out_len},
+        learning_rate_schedule=0.001,
+        save_checkpoints_steps=2500,
+        keep_checkpoint_max=keep_checkpoint_max,
+        iterations_per_loop=500,
+    )
+else: raise NotImplementedError("Running with no accelerators is not a supported case.")
+        
 model.finetune(
     mixture_or_task_name='all_mix',
     pretrained_model_dir=PRETRAINED_DIR,
