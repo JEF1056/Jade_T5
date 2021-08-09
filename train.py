@@ -1,4 +1,5 @@
 import t5
+import t5.models
 import os
 import seqio
 import warnings
