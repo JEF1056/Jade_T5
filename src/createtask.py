@@ -1,5 +1,7 @@
+from posix import listdir
 import t5
 import os
+import tensorflow_datasets as tfds
 import seqio
 import functools
 from google.cloud import storage
@@ -29,7 +31,9 @@ def dataset_fn_local(split, shuffle_files=False):
     global nq_tsv_path
     del shuffle_files
     # Load lines from the text file as examples.
-    ds = tf.data.TextLineDataset(nq_tsv_path[split], compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
+    files_to_read=[os.path.join(nq_tsv_path[split],filename) for filename in os.listdir(nq_tsv_path[split]) if filename.startswith(split)]
+    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Split {split} contains {len(files_to_read)} files.\nFirst 10: {files_to_read[0:10]}")
+    ds = tf.data.TextLineDataset(files_to_read, compression_type=nq_tsv_path["compression"]).filter(lambda line:tf.not_equal(tf.strings.length(line),0))
     # Split each "<question>\t<answer>" example into (question, answer) tuple.
     ds = ds.shuffle(buffer_size=600000)
     ds = ds.map(functools.partial(tf.io.decode_csv, record_defaults=["",""], field_delim="\t", use_quote_delim=False),
@@ -59,13 +63,13 @@ DEFAULT_OUTPUT_FEATURES = {
 def create_registry(bucket, train, val, taskname, compression_type, storemode):
     global nq_tsv_path
     nq_tsv_path={"bucket": bucket, "train":train, "validation":val, "compression": compression_type, "storemode": storemode}
-    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~registering {taskname}: {nq_tsv_path}")
+    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~registering {'gs' if bucket.startswith('gs://') else 'local'} {taskname}: {nq_tsv_path}")
     seqio.TaskRegistry.add(
         taskname,
         # Specify the task source.
         source=seqio.FunctionDataSource(
             # Supply a function which returns a tf.data.Dataset.
-            dataset_fn=dataset_fn if bucket else dataset_fn_local,
+            dataset_fn=dataset_fn if bucket.startswith("gs://") else dataset_fn_local,
             splits=["train", "validation"]),
         # Supply a list of functions that preprocess the input tf.data.Dataset.
         preprocessors=[
@@ -78,6 +82,11 @@ def create_registry(bucket, train, val, taskname, compression_type, storemode):
         metric_fns=[t5.evaluation.metrics.accuracy],
         output_features=DEFAULT_OUTPUT_FEATURES,
     )
+    
+    ds = seqio.TaskRegistry.get(taskname).get_dataset(split="validation", sequence_length={"inputs":256, "targets": 64})
+    print("A few preprocessed validation examples...")
+    for ex in tfds.as_numpy(ds.take(5)):
+        print(ex)
     
 if __name__ == '__main__':
     create_registry("C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "C:/Users/Jess_Fan/Documents/Jade_T5/src/context-val.txt.gz", "all_mix", "GZIP")
